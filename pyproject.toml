@@ -1,0 +1,54 @@
+[build-system]
+build-backend = "mesonpy"
+requires = ["meson-python"]
+
+[project]
+authors = [{name = "ndmlny-qs", email = "60523020+ndmlny-qs@users.noreply.github.com"}]
+classifiers = []
+dependencies = []
+description = "ODBC and NumPy."
+keywords = []
+license = {file = "LICENSE"}
+maintainers = []
+name = "npodbc"
+readme = {file = "README.md", content-type = "text/markdown"}
+requires-python = ">3.11,<3.12"
+version = "0.1.0"
+
+[project.optional-dependencies]
+dev = [
+  "black",
+  "flake8",
+  "flake8-pyproject",
+  "ipdb",
+  "ipython",
+  "isort",
+  "mdformat",
+  "mdformat-myst",
+  "meson",
+  "meson-python",
+  "ninja",
+  "pre-commit",
+  "pyre-check",
+]
+numpy = ["numpy"]
+test = ["pytest", "pytest-cov"]
+
+[project.urls]
+"Issues" = "https://github.com/ndmlny-qs/npodbc/issues"
+"Source" = "https://github.com/ndmlny-qs/npodbc"
+
+[tool.flake8]
+extend-ignore = [
+  "D100", # Missing docstring in public module
+  "D104", # Missing docstring in public package
+  "D107", # Missing docstring in __init__
+  "E203", # Whitespace before ':'
+]
+max-line-length = 88
+per-file-ignores = """
+  __init__.py: F401
+"""
+
+[tool.isort]
+profile = "black"

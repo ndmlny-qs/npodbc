@@ -1,0 +1,15 @@
+BasedOnStyle: Google
+AlignAfterOpenBracket: BlockIndent
+AllowShortBlocksOnASingleLine: false
+AllowShortEnumsOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: false
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterStruct: true
+ColumnLimit: 88
+ContinuationIndentWidth: 8
+IndentWidth: 4
+PointerAlignment: Right
+TabWidth: 4
+UseTab: Never

@@ -1,0 +1,8 @@
+# Python
+.ipynb_checkpoints
+*.egg-info
+
+# Other
+.cache
+build
+compile_commands.json

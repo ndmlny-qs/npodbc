@@ -1,0 +1,10 @@
+name: npodbc-dev
+
+channels:
+  - conda-forge
+
+dependencies:
+  - conda-forge/label/python_debug::python >3.9,<3.12
+
+  # Package managers
+  - pip
