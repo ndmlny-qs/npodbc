@@ -5,6 +5,7 @@
 
 #include <sstream>
 #include <string>
+#include <vector>
 
 // #include "object.h"
 
@@ -133,10 +134,63 @@ static PyObject *driver_connect(PyObject *self) {
     return PyUnicode_FromString(ret_str.c_str());
 }
 
+struct OdbcStringBuffer
+{
+    SQLCHAR buffer[1024];
+    SQLLEN reallen;
+};
+
+static PyObject *system_query(PyObject *self) {
+    SQLHENV env;
+    SQLHDBC dbc;
+    SQLHSTMT stmt;
+    SQLSMALLINT num_columns = 0;
+    SQLCHAR columns[num_columns][128];
+    SQLINTEGER indicator[num_columns];
+    std::ostringstream oss;
+    std::string ret_str;
+
+    SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &env);
+    SQLSetEnvAttr(env, SQL_ATTR_ODBC_VERSION, (void *)SQL_OV_ODBC3, 0);
+    SQLAllocHandle(SQL_HANDLE_DBC, env, &dbc);
+    SQLDriverConnect(
+            dbc, NULL, (SQLCHAR *)"DSN=mssql2022;UID=SA;PWD=StrongPassword2022!",
+            SQL_NTS, NULL, 0, NULL, SQL_DRIVER_NOPROMPT
+    );
+    SQLAllocHandle(SQL_HANDLE_STMT, dbc, &stmt);
+
+    SQLExecDirect(stmt, (SQLCHAR *)"SELECT * FROM SYS.SYSPROCESSES;", SQL_NTS);
+    SQLNumResultCols(stmt, &num_columns);
+    oss << "Number of columns: " << num_columns << std::endl;
+    ret_str.append(oss.str());
+    for (int i = 0; i < num_columns; i++) {
+        SQLBindCol(
+                stmt, i + 1, SQL_C_CHAR, columns[i], sizeof(columns[i]),
+                (SQLLEN *)&indicator[i]
+        );
+    }
+    for (int i = 0; i < num_columns; i++) {
+        if (SQL_SUCCEEDED(SQLFetch(stmt))) {
+            if (indicator[i] == SQL_NULL_DATA) {
+                printf("Column %u: NULL\n", i);
+            } else {
+                printf("Column %u: %s\n", i, columns[i]);
+            }
+        }
+    }
+
+    SQLFreeHandle(SQL_HANDLE_STMT, stmt);
+    SQLDisconnect(dbc);
+    SQLFreeHandle(SQL_HANDLE_DBC, dbc);
+    SQLFreeHandle(SQL_HANDLE_ENV, env);
+    return PyUnicode_FromString(ret_str.c_str());
+}
+
 static PyMethodDef methods[] = {
         {"list_drivers", (PyCFunction)list_drivers, METH_NOARGS, NULL},
         {"list_data_sources", (PyCFunction)list_data_sources, METH_NOARGS, NULL},
         {"driver_connect", (PyCFunction)driver_connect, METH_NOARGS, NULL},
+        {"system_query", (PyCFunction)system_query, METH_NOARGS, NULL},
         {NULL, NULL, 0, NULL},
 };
 

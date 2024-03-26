@@ -11,7 +11,7 @@ project. You will need the tool `bear` if you want to maintain a set of
 ```bash
 mamba env create --file environment
 mamba activate npodbc-dev
-bear - pip install --no-build-isolation --editable .[dev,docs,test]
+bear -- pip install --no-build-isolation --editable .[dev,docs,test]
 ```
 
 ### SQL 2022
